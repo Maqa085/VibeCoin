@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vibecoin Sürətli Mini App + Levels</title>
+    <title>Vibecoin Sürətli Klik Tətbiqi</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
@@ -12,7 +12,7 @@
     
     <style>
         /* ==========================================================================
-           1. RESET VƏ SABİT QARANLIQ TEMA (NO LAG)
+           1. ESAS RESET VƏ SADƏ QARANLIQ TEMA (SIFIR DONMA)
            ========================================================================== */
         :root {
             --bg-color: #0b1424;
@@ -22,7 +22,7 @@
             --text-gray: #8a99ad;
             --gold: #ffd700;
             --error: #ff3333;
-            --level-color: #00f2ff;
+            --success: #2ecc71;
         }
 
         * {
@@ -49,8 +49,7 @@
             flex: 1;
             overflow-y: auto;
             padding: 20px;
-            padding-bottom: 95px;
-            position: relative;
+            padding-bottom: 100px;
         }
 
         .app-container::-webkit-scrollbar {
@@ -65,9 +64,7 @@
             display: block;
         }
 
-        /* ==========================================================================
-           2. ÜST PANEL
-           ========================================================================== */
+        /* Üst Panel */
         .header-profile {
             display: flex;
             align-items: center;
@@ -88,19 +85,11 @@
             background: #203354;
         }
 
-        .user-info h3 {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .user-info p {
-            font-size: 11px;
-            color: var(--tg-blue);
-            font-weight: 500;
-        }
+        .user-info h3 { font-size: 14px; font-weight: 600; }
+        .user-info p { font-size: 11px; color: var(--tg-blue); font-weight: 500; }
 
         /* ==========================================================================
-           3. ANA SƏHİFƏ, COIN DÜYMƏSİ VƏ LEVEL PANELİ
+           2. ANA SƏHİFƏ & ENERJİ MEXANİKASI
            ========================================================================== */
         .clicker-container {
             display: flex;
@@ -108,27 +97,6 @@
             align-items: center;
             justify-content: center;
             margin-top: 15px;
-        }
-
-        /* Premium Level Göstəricisi Buttonu */
-        .level-badge-container {
-            background: rgba(0, 242, 255, 0.1);
-            border: 1px solid var(--level-color);
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--level-color);
-            margin-bottom: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: transform 0.1s ease;
-        }
-
-        .level-badge-container:active {
-            transform: scale(0.95);
         }
 
         .balance-title {
@@ -145,13 +113,14 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            text-shadow: 0 4px 15px rgba(0,136,204,0.3);
         }
 
+        /* Dairəvi Qızılı Sikkə */
         .coin-wrapper {
             position: relative;
             width: 210px;
             height: 210px;
+            margin-bottom: 30px;
         }
 
         .coin-btn {
@@ -159,7 +128,7 @@
             height: 100%;
             border-radius: 50%;
             background: radial-gradient(circle, #ffe066 0%, #f5b041 50%, #d35400 100%);
-            box-shadow: 0 12px 28px rgba(211, 84, 0, 0.4), inset 0 0 12px rgba(255,255,255,0.6);
+            box-shadow: 0 12px 28px rgba(211, 84, 0, 0.35), inset 0 0 12px rgba(255,255,255,0.6);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -169,7 +138,7 @@
         }
 
         .coin-btn:active {
-            transform: scale(0.92);
+            transform: scale(0.93);
         }
 
         .coin-btn i {
@@ -178,42 +147,76 @@
             text-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
-        /* Sürətli Klik Animasiyaları */
+        /* Enerji Göstəriciləri */
+        .energy-container {
+            width: 100%;
+            max-width: 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .energy-text-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .energy-bar-bg {
+            width: 100%;
+            height: 12px;
+            background: #101d34;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .energy-bar-fill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #f1c40f, #e67e22);
+            border-radius: 10px;
+            transition: width 0.1s linear;
+        }
+
+        /* Sürətli Klik Animasiyası */
         .plus-one {
             position: absolute;
             color: #ffffff;
-            font-size: 28px;
+            font-size: 30px;
             font-weight: 700;
             pointer-events: none;
-            animation: floatUp 0.6s ease-out forwards;
+            animation: floatUp 0.55s ease-out forwards;
             z-index: 10;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            text-shadow: 0 2px 6px rgba(0,0,0,0.6);
         }
 
         @keyframes floatUp {
             0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-110px) scale(1.2); }
+            100% { opacity: 0; transform: translateY(-100px) scale(1.15); }
         }
 
         .coin-particle {
             position: absolute;
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             background: var(--gold);
             border-radius: 50%;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
             pointer-events: none;
             z-index: 9;
-            animation: particleScatter 0.5s ease-out forwards;
+            animation: particleScatter 0.45s ease-out forwards;
         }
 
         @keyframes particleScatter {
             0% { transform: translate(0, 0) scale(1); opacity: 1; }
-            100% { transform: translate(var(--mx), var(--my)) scale(0.4); opacity: 0; }
+            100% { transform: translate(var(--mx), var(--my)) scale(0.3); opacity: 0; }
         }
 
         /* ==========================================================================
-           4. TAPŞIRIQLAR VƏ LİDERLƏR SİYAHISI
+           3. TAPŞIRIQLAR VƏ YÜKSƏLTMƏLƏR (FLEX LIST CARDS)
            ========================================================================== */
         .section-title {
             font-size: 19px;
@@ -228,25 +231,58 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
-        .task-detail { display: flex; flex-direction: column; gap: 4px; }
-        .task-name { font-size: 14px; font-weight: 500; }
-        .task-reward { font-size: 12px; color: var(--tg-blue); font-weight: 600; }
+        .task-detail { 
+            display: flex; 
+            align-items: center;
+            gap: 14px;
+        }
 
-        .btn-check {
+        .task-icon-box {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: #1c3052;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--gold);
+        }
+
+        .task-info-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .task-name { font-size: 14px; font-weight: 600; }
+        .task-reward { font-size: 12px; color: var(--text-gray); font-weight: 500; }
+
+        .btn-action {
             background: var(--tg-blue);
             color: white;
             border: none;
-            padding: 8px 18px;
-            border-radius: 20px;
-            font-size: 13px;
+            padding: 9px 16px;
+            border-radius: 18px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
+            transition: background 0.2s;
         }
 
+        .btn-action:disabled {
+            background: #2c3e50;
+            color: var(--text-gray);
+            cursor: not-allowed;
+        }
+
+        /* ==========================================================================
+           4. LİDERLƏR VƏ PROFİL SƏHİFƏSİ
+           ========================================================================== */
         .leader-list {
             background: var(--card-bg);
             border-radius: 16px;
@@ -262,26 +298,10 @@
         }
 
         .leader-rank { width: 35px; font-size: 15px; font-weight: 700; color: var(--text-gray); }
-        .leader-item:nth-child(1) .leader-rank { color: var(--gold) !important; }
-
         .leader-avatar { width: 35px; height: 35px; border-radius: 50%; margin-right: 12px; object-fit: cover; background: #203354; }
-        .leader-name { flex: 1; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
-        
-        /* Sıralamadakı Səviyyə Etiketi */
-        .leader-level-tag {
-            background: rgba(0, 242, 255, 0.15);
-            color: var(--level-color);
-            font-size: 11px;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-weight: 600;
-        }
-        
+        .leader-name { flex: 1; font-size: 14px; font-weight: 500; }
         .leader-coins { font-weight: 600; color: var(--gold); font-size: 14px; }
 
-        /* ==========================================================================
-           5. PROFİL SƏHİFƏSİ
-           ========================================================================== */
         .profile-card {
             background: linear-gradient(135deg, var(--card-bg) 0%, #172a4a 100%);
             border-radius: 20px;
@@ -290,15 +310,9 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .profile-card .user-avatar {
-            width: 85px;
-            height: 85px;
-            border-width: 3px;
-            margin-bottom: 12px;
-        }
-
+        .profile-card .user-avatar { width: 85px; height: 85px; border-width: 3px; margin-bottom: 12px; }
         .profile-username { font-size: 19px; font-weight: 600; }
-        .profile-status { font-size: 12px; color: var(--level-color); font-weight: 500; margin-bottom: 20px; }
+        .profile-status { font-size: 12px; color: var(--tg-blue); font-weight: 500; margin-bottom: 20px; }
 
         .stats-grid {
             background: rgba(11, 21, 36, 0.5);
@@ -313,7 +327,7 @@
         .stat-value { font-weight: 600; font-size: 16px; }
 
         /* ==========================================================================
-           6. NAVİQASİYA (NAVBAR)
+           5. SƏSLƏNƏN ALT NAVMENÜ (İKON ÜSTDƏ, SÖZ AŞAĞIDA)
            ========================================================================== */
         .navbar {
             position: fixed;
@@ -326,14 +340,29 @@
         }
 
         .nav-item {
-            display: flex flex-direction: column; align-items: center;
-            color: var(--text-gray); font-size: 11px; font-weight: 500; gap: 4px; cursor: pointer;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            justify-content: center;
+            color: var(--text-gray); 
+            font-size: 11px; 
+            font-weight: 500; 
+            gap: 5px; 
+            cursor: pointer;
+            width: 20%;
+            height: 100%;
         }
-        .nav-item i { font-size: 19px; }
-        .nav-item.active { color: var(--tg-blue); }
+        
+        .nav-item i { 
+            font-size: 20px; 
+        }
+        
+        .nav-item.active { 
+            color: var(--tg-blue); 
+        }
 
         /* ==========================================================================
-           7. MODAL PƏNCƏRƏLƏR (NİDA VƏ LEVEL MƏLUMAT SƏHİFƏSİ)
+           6. NİDA MODAL SƏHİFƏSİ
            ========================================================================== */
         .modal-overlay {
             position: fixed;
@@ -367,52 +396,10 @@
             50% { opacity: 0.4; transform: scale(0.95); }
         }
 
-        .modal-text { font-size: 15px; font-weight: 500; margin-bottom: 20px; }
+        .modal-text { font-size: 14px; font-weight: 600; margin-bottom: 20px; }
         .modal-btn {
             background: var(--error); color: white; border: none; padding: 8px 25px;
             border-radius: 20px; font-weight: 600; cursor: pointer;
-        }
-
-        /* Səviyyə məlumatları üçün xüsusi böyük pəncərə */
-        .level-modal-box {
-            background: #152540;
-            border: 2px solid var(--level-color);
-            border-radius: 20px;
-            width: 310px;
-            padding: 25px 18px;
-            color: white;
-        }
-        .level-modal-title {
-            font-size: 17px;
-            font-weight: 600;
-            text-align: center;
-            margin-bottom: 15px;
-            color: var(--level-color);
-        }
-        .level-list-scroll {
-            max-height: 260px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-        .level-list-scroll::-webkit-scrollbar {
-            width: 4px;
-        }
-        .level-list-scroll::-webkit-scrollbar-thumb {
-            background: var(--level-color);
-            border-radius: 10px;
-        }
-        .level-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 4px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            font-size: 12px;
-        }
-        .level-row span:first-child { font-weight: 600; }
-        .level-row span:last-child { color: var(--gold); }
-        .level-close-btn {
-            background: var(--level-color); color: #0b1424; border: none; padding: 8px 0;
-            width: 100%; border-radius: 15px; font-weight: 700; margin-top: 15px; cursor: pointer;
         }
     </style>
 </head>
@@ -423,25 +410,6 @@
             <div class="modal-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
             <div class="modal-text">Kanala qatılmamısınız!</div>
             <button class="modal-btn" onclick="closeModal()">Bağla</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="level-modal">
-        <div class="level-modal-box">
-            <div class="level-modal-title"><i class="fa-solid fa-layer-group"></i> Səviyyə Limitləri</div>
-            <div class="level-list-scroll">
-                <div class="level-row"><span>1 Səviyyə</span><span>0 - 5,000 Coin (+1)</span></div>
-                <div class="level-row"><span>2 Səviyyə</span><span>5,001 - 10,000 Coin (+1)</span></div>
-                <div class="level-row"><span>3 Səviyyə</span><span>10,001 - 15,000 Coin (+1)</span></div>
-                <div class="level-row"><span>4 Səviyyə</span><span>15,001 - 20,000 Coin (+1)</span></div>
-                <div class="level-row"><span>5 Səviyyə</span><span>20,001 - 25,000 Coin (+1)</span></div>
-                <div class="level-row"><span>6 Səviyyə</span><span>25,001 - 30,000 Coin (+2)</span></div>
-                <div class="level-row"><span>7 Səviyyə</span><span>30,001 - 35,000 Coin (+2)</span></div>
-                <div class="level-row"><span>8 Səviyyə</span><span>35,001 - 40,000 Coin (+2)</span></div>
-                <div class="level-row"><span>9 Səviyyə</span><span>40,001 - 60,000 Coin (+2)</span></div>
-                <div class="level-row"><span>10 Səviyyə</span><span>60,001+ Coin (+2)</span></div>
-            </div>
-            <button class="level-close-btn" onclick="closeLevelModal()">Anladım</button>
         </div>
     </div>
 
@@ -457,13 +425,6 @@
 
         <div id="home" class="page active">
             <div class="clicker-container">
-                
-                <div class="level-badge-container" onclick="openLevelModal()">
-                    <i class="fa-solid fa-trophy"></i>
-                    <span id="home-level-display">Level 1</span>
-                    <i class="fa-solid fa-circle-info" style="font-size: 11px; opacity: 0.8;"></i>
-                </div>
-
                 <div class="balance-title">Balansınız</div>
                 <div class="balance-value">
                     <i class="fa-solid fa-coins" style="color: #ffd700;"></i>
@@ -475,6 +436,42 @@
                         <i class="fa-solid fa-bitcoin-sign"></i>
                     </div>
                 </div>
+
+                <div class="energy-container">
+                    <div class="energy-text-row">
+                        <span><i class="fa-solid fa-bolt" style="color:#f1c40f"></i> Enerji</span>
+                        <span id="energy-counter">500 / 500</span>
+                    </div>
+                    <div class="energy-bar-bg">
+                        <div class="energy-bar-fill" id="energy-bar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="boosts" class="page">
+            <h2 class="section-title">Yüksəltmələr</h2>
+            
+            <div class="task-card">
+                <div class="task-detail">
+                    <div class="task-icon-box"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="task-info-text">
+                        <span class="task-name" id="energy-lvl-title">Enerji Limiti (Lvl 1)</span>
+                        <span class="task-reward" id="energy-lvl-desc">Limit: 500</span>
+                    </div>
+                </div>
+                <button class="btn-action" id="btn-upgrade-energy" onclick="upgradeEnergyLimit()">500 🪙</button>
+            </div>
+
+            <div class="task-card">
+                <div class="task-detail">
+                    <div class="task-icon-box"><i class="fa-solid fa-arrow-pointer"></i></div>
+                    <div class="task-info-text">
+                        <span class="task-name" id="click-lvl-title">Kliktap (Lvl 1)</span>
+                        <span class="task-reward" id="click-lvl-desc">+1 Coin / Klik</span>
+                    </div>
+                </div>
+                <button class="btn-action" id="btn-upgrade-click" onclick="upgradeKliktap()">500 🪙</button>
             </div>
         </div>
 
@@ -482,10 +479,13 @@
             <h2 class="section-title">Tapşırıqlar</h2>
             <div class="task-card">
                 <div class="task-detail">
-                    <span class="task-name">Kanala Qatıl</span>
-                    <span class="task-reward">+100 Coin</span>
+                    <div class="task-icon-box" style="color: #0088cc;"><i class="fa-brands fa-telegram"></i></div>
+                    <div class="task-info-text">
+                        <span class="task-name">Kanala Qatıl</span>
+                        <span class="task-reward">+100 Coin</span>
+                    </div>
                 </div>
-                <button class="btn-check" onclick="verifyChannelJoin(this)">Yoxla</button>
+                <button class="btn-action" onclick="verifyChannelJoin(this)">Yoxla</button>
             </div>
         </div>
 
@@ -499,7 +499,7 @@
             <div class="profile-card">
                 <img src="" alt="PP" class="user-avatar" id="profile-avatar">
                 <div class="profile-username" id="profile-name">Yüklənir...</div>
-                <div class="profile-status" id="profile-level-status">Level 1 İştirakçısı</div>
+                <div class="profile-status">Orijinal İştirakçı</div>
                 
                 <div class="stats-grid">
                     <div>
@@ -518,6 +518,7 @@
 
     <nav class="navbar">
         <div class="nav-item active" onclick="switchTab('home')"><i class="fa-solid fa-house"></i><span>Ana Səhifə</span></div>
+        <div class="nav-item" onclick="switchTab('boosts')"><i class="fa-solid fa-bolt"></i><span>Yüksəltmələr</span></div>
         <div class="nav-item" onclick="switchTab('tasks')"><i class="fa-solid fa-tasks"></i><span>Tapşırıqlar</span></div>
         <div class="nav-item" onclick="switchTab('leaderboard')"><i class="fa-solid fa-trophy"></i><span>Liderlər</span></div>
         <div class="nav-item" onclick="switchTab('profile')"><i class="fa-solid fa-user"></i><span>Profilim</span></div>
@@ -527,13 +528,48 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // İstifadəçi unikal ID nizamlanması
+        // İstifadəçi ID-sinə əsasən unikal bazanın qurulması
         const tgUser = tg.initDataUnsafe?.user;
-        const userTelegramId = tgUser ? tgUser.id.toString() : "local_user_test";
-        const STORAGE_KEY = `vibecoin_uid_balance_${userTelegramId}`;
+        const userTelegramId = tgUser ? tgUser.id.toString() : "local_user_vibe";
+        
+        // Storage unikal Key-ləri
+        const KEY_COINS = `vibe_coins_uid_${userTelegramId}`;
+        const KEY_ELVL = `vibe_elvl_uid_${userTelegramId}`;
+        const KEY_CLVL = `vibe_clvl_uid_${userTelegramId}`;
+        const KEY_ENERGY = `vibe_energy_uid_${userTelegramId}`;
 
-        let coins = parseInt(localStorage.getItem(STORAGE_KEY)) || 0;
+        // Məlumatların RAM-a yüklənməsi
+        let coins = parseInt(localStorage.getItem(KEY_COINS)) || 0;
+        let energyLvl = parseInt(localStorage.getItem(KEY_ELVL)) || 1;
+        let clickLvl = parseInt(localStorage.getItem(KEY_CLVL)) || 1;
+
+        // Level Sərhədləri və Konfiqurasiyaları (Sənin verdiyin rəsmi siyahı)
+        const energyConfigs = {
+            1: { limit: 500, cost: 500 },
+            2: { limit: 750, cost: 2500 },
+            3: { limit: 1000, cost: 10000 },
+            4: { limit: 1500, cost: 25000 },
+            5: { limit: 2500, cost: 0 } // Son Level
+        };
+
+        const clickConfigs = {
+            1: { power: 1, cost: 500 },
+            2: { power: 2, cost: 5000 },
+            3: { power: 3, cost: 10000 },
+            4: { power: 4, cost: 20000 },
+            5: { power: 5, cost: 0 } // Son Level
+        };
+
+        let maxEnergy = energyConfigs[energyLvl].limit;
+        let clickPower = clickConfigs[clickLvl].power;
+        
+        // Enerjini bərpa etmək və ya saxlamaq
+        let currentEnergy = localStorage.getItem(KEY_ENERGY) !== null ? parseInt(localStorage.getItem(KEY_ENERGY)) : maxEnergy;
+        if (currentEnergy > maxEnergy) currentEnergy = maxEnergy;
+
+        // İnterfeysin ilkin doldurulması
         document.getElementById('coin-count').innerText = coins;
+        updateEnergyUI();
 
         const defaultAvatar = "https://api.dicebear.com/7.x/bottts/svg?seed=vibe";
         let currentUser = {
@@ -543,93 +579,163 @@
             coins: coins
         };
 
-        // 🧠 Dinamik Level Hesablama Mexanizmi
-        function calculateLevel(coinAmount) {
-            if (coinAmount <= 5000) return 1;
-            if (coinAmount <= 10000) return 2;
-            if (coinAmount <= 15000) return 3;
-            if (coinAmount <= 20000) return 4;
-            if (coinAmount <= 25000) return 5;
-            if (coinAmount <= 30000) return 6;
-            if (coinAmount <= 35000) return 7;
-            if (coinAmount <= 40000) return 8;
-            if (coinAmount <= 60000) return 9;
-            return 10;
-        }
-
-        // Klik Gücü Hesablama (+1 və ya +2)
-        function getClickPower(level) {
-            return level <= 5 ? 1 : 2;
-        }
-
         function updateUIProfiles() {
-            const currentLevel = calculateLevel(coins);
-            
             document.getElementById('header-name').innerText = currentUser.name;
             document.getElementById('header-avatar').src = currentUser.photo;
             document.getElementById('profile-name').innerText = currentUser.name;
             document.getElementById('profile-avatar').src = currentUser.photo;
             document.getElementById('profile-id').innerText = `#${currentUser.id}`;
             document.getElementById('profile-coins').innerText = coins;
-            
-            // Səviyyə yazılarının yenilənməsi
-            document.getElementById('home-level-display').innerText = `Level ${currentLevel}`;
-            document.getElementById('profile-level-status').innerText = `Level ${currentLevel} Üzvü`;
         }
         updateUIProfiles();
+        updateBoostPageUI();
 
-        // 🌟 Klik Sistemi
+        // Enerji UI yeniləmə funksiyası
+        function updateEnergyUI() {
+            document.getElementById('energy-counter').innerText = `${currentEnergy} / ${maxEnergy}`;
+            const pct = (currentEnergy / maxEnergy) * 100;
+            document.getElementById('energy-bar').style.width = `${pct}%`;
+        }
+
+        // ==========================================================================
+        // SÜRETli KLiK MEXANiKASI VƏ ENERJi AZALMASI
+        // ==========================================================================
         const coinBtn = document.getElementById('main-coin-btn');
         coinBtn.addEventListener('click', (e) => {
-            const currentLevel = calculateLevel(coins);
-            const clickPower = getClickPower(currentLevel);
-            
-            coins += clickPower;
-            document.getElementById('coin-count').innerText = coins;
-            localStorage.setItem(STORAGE_KEY, coins);
-            currentUser.coins = coins;
-            
-            // Səviyyə dəyişərsə dərhal UI yenilənsin
-            document.getElementById('home-level-display').innerText = `Level ${calculateLevel(coins)}`;
-            
-            syncToRealLeaderboard(currentUser);
+            // Enerji kifayətdirmi yoxla
+            if (currentEnergy < clickPower) return;
 
-            // Dinamik Uçan Yazı Animasiyası (+1 və ya +2)
+            // Enerjini azalt, coini artır
+            currentEnergy -= clickPower;
+            coins += clickPower;
+
+            document.getElementById('coin-count').innerText = coins;
+            localStorage.setItem(KEY_COINS, coins);
+            localStorage.setItem(KEY_ENERGY, currentEnergy);
+            
+            currentUser.coins = coins;
+            updateEnergyUI();
+            syncToLeaderboard(currentUser);
+
+            // +ClickPower Uçan Yazı Animasiyası
             const plus = document.createElement('div');
             plus.classList.add('plus-one');
             plus.innerText = `+${clickPower}`;
             plus.style.left = `${e.clientX - 15}px`;
             plus.style.top = `${e.clientY - 30}px`;
             document.body.appendChild(plus);
-            setTimeout(() => plus.remove(), 600);
+            setTimeout(() => plus.remove(), 550);
 
-            // Kiçik qızılı hissəciklər
-            for (let i = 0; i < 5; i++) {
+            // Zərrəcik effekti
+            for (let i = 0; i < 4; i++) {
                 const particle = document.createElement('div');
                 particle.classList.add('coin-particle');
                 const angle = Math.random() * Math.PI * 2;
-                const dist = 35 + Math.random() * 40;
+                const dist = 30 + Math.random() * 35;
                 particle.style.setProperty('--mx', `${Math.cos(angle) * dist}px`);
                 particle.style.setProperty('--my', `${Math.sin(angle) * dist}px`);
                 particle.style.left = `${e.clientX - 5}px`;
                 particle.style.top = `${e.clientY - 5}px`;
                 document.body.appendChild(particle);
-                setTimeout(() => particle.remove(), 500);
+                setTimeout(() => particle.remove(), 450);
             }
         });
 
-        // 📊 LİDERLƏR CƏDVƏLİ RESTRİKSİYASI
-        function syncToRealLeaderboard(userObj) {
+        // ==========================================================================
+        // ⚡ ENERJİNİN HƏR 5 SANİYƏDƏ 1 BƏRPA OLMASI (AUTOMATIC REGEN)
+        // ==========================================================================
+        setInterval(() => {
+            if (currentEnergy < maxEnergy) {
+                currentEnergy += 1;
+                if (currentEnergy > maxEnergy) currentEnergy = maxEnergy;
+                localStorage.setItem(KEY_ENERGY, currentEnergy);
+                updateEnergyUI();
+            }
+        }, 5000); // Dəqiq 5 saniyə intervalı
+
+        // ==========================================================================
+        // YÜKSƏLTMƏLƏR (BOOST) MƏNTİQİ
+        // ==========================================================================
+        function updateBoostPageUI() {
+            // Enerji Limit UI nizamı
+            const eCfg = energyConfigs[energyLvl];
+            document.getElementById('energy-lvl-title').innerText = `Enerji Limiti (Lvl ${energyLvl})`;
+            document.getElementById('energy-lvl-desc').innerText = `Limit: ${eCfg.limit}`;
+            const btnEnergy = document.getElementById('btn-upgrade-energy');
+            if (energyLvl >= 5) {
+                btnEnergy.innerText = "MAX";
+                btnEnergy.disabled = true;
+            } else {
+                btnEnergy.innerText = `${eCfg.cost} 🪙`;
+                btnEnergy.disabled = false;
+            }
+
+            // Kliktap UI nizamı
+            const cCfg = clickConfigs[clickLvl];
+            document.getElementById('click-lvl-title').innerText = `Kliktap (Lvl ${clickLvl})`;
+            document.getElementById('click-lvl-desc').innerText = `+${cCfg.power} Coin / Klik`;
+            const btnClick = document.getElementById('btn-upgrade-click');
+            if (clickLvl >= 5) {
+                btnClick.innerText = "MAX";
+                btnClick.disabled = true;
+            } else {
+                btnClick.innerText = `${cCfg.cost} 🪙`;
+                btnClick.disabled = false;
+            }
+        }
+
+        function upgradeEnergyLimit() {
+            if (energyLvl >= 5) return;
+            const currentCost = energyConfigs[energyLvl].cost;
+            
+            if (coins >= currentCost) {
+                coins -= currentCost;
+                energyLvl += 1;
+                maxEnergy = energyConfigs[energyLvl].limit;
+                
+                localStorage.setItem(KEY_COINS, coins);
+                localStorage.setItem(KEY_ELVL, energyLvl);
+                
+                document.getElementById('coin-count').innerText = coins;
+                currentUser.coins = coins;
+                
+                updateEnergyUI();
+                updateBoostPageUI();
+                syncToLeaderboard(currentUser);
+            }
+        }
+
+        function upgradeKliktap() {
+            if (clickLvl >= 5) return;
+            const currentCost = clickConfigs[clickLvl].cost;
+            
+            if (coins >= currentCost) {
+                coins -= currentCost;
+                clickLvl += 1;
+                clickPower = clickConfigs[clickLvl].power;
+                
+                localStorage.setItem(KEY_COINS, coins);
+                localStorage.setItem(KEY_CLVL, clickLvl);
+                
+                document.getElementById('coin-count').innerText = coins;
+                currentUser.coins = coins;
+                
+                updateBoostPageUI();
+                syncToLeaderboard(currentUser);
+            }
+        }
+
+        // ==========================================================================
+        // REAL LİDERLƏR VƏ NAVİQASİYA SISTEMİ
+        // ==========================================================================
+        function syncToLeaderboard(userObj) {
             let list = JSON.parse(localStorage.getItem('pure_real_users')) || [];
             const idx = list.findIndex(u => u.id === userObj.id);
-            if (idx !== -1) {
-                list[idx].coins = userObj.coins;
-            } else {
-                list.push(userObj);
-            }
+            if (idx !== -1) list[idx].coins = userObj.coins;
+            else list.push(userObj);
             localStorage.setItem('pure_real_users', JSON.stringify(list));
         }
-        syncToRealLeaderboard(currentUser);
+        syncToLeaderboard(currentUser);
 
         function switchTab(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -639,11 +745,12 @@
 
             if(pageId === 'profile') {
                 document.getElementById('top-header').style.display = 'none';
-                updateUIProfiles();
+                document.getElementById('profile-coins').innerText = coins;
             } else {
                 document.getElementById('top-header').style.display = 'flex';
             }
             if(pageId === 'leaderboard') loadLeaderboard();
+            if(pageId === 'boosts') updateBoostPageUI();
         }
 
         function loadLeaderboard() {
@@ -654,25 +761,17 @@
             container.innerHTML = "";
             
             list.forEach((u, idx) => {
-                // Hər bir liderin xalına uyğun səviyyəsini hesablayırıq
-                const userLevel = calculateLevel(u.coins);
-                
                 container.innerHTML += `
                     <div class="leader-item">
                         <div class="leader-rank">${idx + 1}</div>
                         <img src="${u.photo}" class="leader-avatar">
-                        <div class="leader-name">
-                            <span>${u.name}</span>
-                            <span class="leader-level-tag">Lvl ${userLevel}</span>
-                            ${u.id === currentUser.id ? '<span style="color:var(--tg-blue); font-size:11px;">(Sən)</span>' : ''}
-                        </div>
+                        <div class="leader-name">${u.name} ${u.id === currentUser.id ? '<span style="color:var(--tg-blue); font-size:11px;">(Sən)</span>' : ''}</div>
                         <div class="leader-coins">${u.coins} 🪙</div>
                     </div>
                 `;
             });
         }
 
-        // Real Kanal Qoşulma API Yoxlanışı
         function verifyChannelJoin(btn) {
             btn.innerText = "Yoxlanılır...";
             btn.disabled = true;
@@ -685,10 +784,9 @@
                     btn.style.background = "#2ecc71";
                     coins += 100;
                     document.getElementById('coin-count').innerText = coins;
-                    localStorage.setItem(STORAGE_KEY, coins);
+                    localStorage.setItem(KEY_COINS, coins);
                     currentUser.coins = coins;
-                    syncToRealLeaderboard(currentUser);
-                    updateUIProfiles();
+                    syncToLeaderboard(currentUser);
                 } else {
                     btn.innerText = "Yoxla";
                     btn.disabled = false;
@@ -702,12 +800,8 @@
             });
         }
 
-        // Modal İdarəetmə Funksiyaları
         function openModal() { document.getElementById('task-modal').classList.add('open'); }
         function closeModal() { document.getElementById('task-modal').classList.remove('open'); }
-        
-        function openLevelModal() { document.getElementById('level-modal').classList.add('open'); }
-        function closeLevelModal() { document.getElementById('level-modal').classList.remove('open'); }
     </script>
 </body>
 </html>
