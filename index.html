@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vibecoin Sürətli Mini App</title>
+    <title>Vibecoin Sürətli Mini App + Levels</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
@@ -22,6 +22,7 @@
             --text-gray: #8a99ad;
             --gold: #ffd700;
             --error: #ff3333;
+            --level-color: #00f2ff;
         }
 
         * {
@@ -99,14 +100,35 @@
         }
 
         /* ==========================================================================
-           3. ANA SƏHİFƏ & ORİJİNAL COIN DÜYMƏSİ
+           3. ANA SƏHİFƏ, COIN DÜYMƏSİ VƏ LEVEL PANELİ
            ========================================================================== */
         .clicker-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            margin-top: 30px;
+            margin-top: 15px;
+        }
+
+        /* Premium Level Göstəricisi Buttonu */
+        .level-badge-container {
+            background: rgba(0, 242, 255, 0.1);
+            border: 1px solid var(--level-color);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--level-color);
+            margin-bottom: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.1s ease;
+        }
+
+        .level-badge-container:active {
+            transform: scale(0.95);
         }
 
         .balance-title {
@@ -119,14 +141,13 @@
         .balance-value {
             font-size: 44px;
             font-weight: 700;
-            margin-bottom: 35px;
+            margin-bottom: 25px;
             display: flex;
             align-items: center;
             gap: 10px;
             text-shadow: 0 4px 15px rgba(0,136,204,0.3);
         }
 
-        /* Real Orijinal Sürətli Coin Görünüşü */
         .coin-wrapper {
             position: relative;
             width: 210px;
@@ -244,7 +265,18 @@
         .leader-item:nth-child(1) .leader-rank { color: var(--gold) !important; }
 
         .leader-avatar { width: 35px; height: 35px; border-radius: 50%; margin-right: 12px; object-fit: cover; background: #203354; }
-        .leader-name { flex: 1; font-size: 14px; font-weight: 500; }
+        .leader-name { flex: 1; font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+        
+        /* Sıralamadakı Səviyyə Etiketi */
+        .leader-level-tag {
+            background: rgba(0, 242, 255, 0.15);
+            color: var(--level-color);
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        
         .leader-coins { font-weight: 600; color: var(--gold); font-size: 14px; }
 
         /* ==========================================================================
@@ -266,7 +298,7 @@
         }
 
         .profile-username { font-size: 19px; font-weight: 600; }
-        .profile-status { font-size: 12px; color: var(--tg-blue); font-weight: 500; margin-bottom: 20px; }
+        .profile-status { font-size: 12px; color: var(--level-color); font-weight: 500; margin-bottom: 20px; }
 
         .stats-grid {
             background: rgba(11, 21, 36, 0.5);
@@ -294,14 +326,14 @@
         }
 
         .nav-item {
-            display: flex; flex-direction: column; align-items: center;
+            display: flex flex-direction: column; align-items: center;
             color: var(--text-gray); font-size: 11px; font-weight: 500; gap: 4px; cursor: pointer;
         }
         .nav-item i { font-size: 19px; }
         .nav-item.active { color: var(--tg-blue); }
 
         /* ==========================================================================
-           7. MODAL SƏHİFƏSİ
+           7. MODAL PƏNCƏRƏLƏR (NİDA VƏ LEVEL MƏLUMAT SƏHİFƏSİ)
            ========================================================================== */
         .modal-overlay {
             position: fixed;
@@ -340,6 +372,48 @@
             background: var(--error); color: white; border: none; padding: 8px 25px;
             border-radius: 20px; font-weight: 600; cursor: pointer;
         }
+
+        /* Səviyyə məlumatları üçün xüsusi böyük pəncərə */
+        .level-modal-box {
+            background: #152540;
+            border: 2px solid var(--level-color);
+            border-radius: 20px;
+            width: 310px;
+            padding: 25px 18px;
+            color: white;
+        }
+        .level-modal-title {
+            font-size: 17px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 15px;
+            color: var(--level-color);
+        }
+        .level-list-scroll {
+            max-height: 260px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        .level-list-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .level-list-scroll::-webkit-scrollbar-thumb {
+            background: var(--level-color);
+            border-radius: 10px;
+        }
+        .level-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 4px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 12px;
+        }
+        .level-row span:first-child { font-weight: 600; }
+        .level-row span:last-child { color: var(--gold); }
+        .level-close-btn {
+            background: var(--level-color); color: #0b1424; border: none; padding: 8px 0;
+            width: 100%; border-radius: 15px; font-weight: 700; margin-top: 15px; cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -349,6 +423,25 @@
             <div class="modal-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
             <div class="modal-text">Kanala qatılmamısınız!</div>
             <button class="modal-btn" onclick="closeModal()">Bağla</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="level-modal">
+        <div class="level-modal-box">
+            <div class="level-modal-title"><i class="fa-solid fa-layer-group"></i> Səviyyə Limitləri</div>
+            <div class="level-list-scroll">
+                <div class="level-row"><span>1 Səviyyə</span><span>0 - 5,000 Coin (+1)</span></div>
+                <div class="level-row"><span>2 Səviyyə</span><span>5,001 - 10,000 Coin (+1)</span></div>
+                <div class="level-row"><span>3 Səviyyə</span><span>10,001 - 15,000 Coin (+1)</span></div>
+                <div class="level-row"><span>4 Səviyyə</span><span>15,001 - 20,000 Coin (+1)</span></div>
+                <div class="level-row"><span>5 Səviyyə</span><span>20,001 - 25,000 Coin (+1)</span></div>
+                <div class="level-row"><span>6 Səviyyə</span><span>25,001 - 30,000 Coin (+2)</span></div>
+                <div class="level-row"><span>7 Səviyyə</span><span>30,001 - 35,000 Coin (+2)</span></div>
+                <div class="level-row"><span>8 Səviyyə</span><span>35,001 - 40,000 Coin (+2)</span></div>
+                <div class="level-row"><span>9 Səviyyə</span><span>40,001 - 60,000 Coin (+2)</span></div>
+                <div class="level-row"><span>10 Səviyyə</span><span>60,001+ Coin (+2)</span></div>
+            </div>
+            <button class="level-close-btn" onclick="closeLevelModal()">Anladım</button>
         </div>
     </div>
 
@@ -364,6 +457,13 @@
 
         <div id="home" class="page active">
             <div class="clicker-container">
+                
+                <div class="level-badge-container" onclick="openLevelModal()">
+                    <i class="fa-solid fa-trophy"></i>
+                    <span id="home-level-display">Level 1</span>
+                    <i class="fa-solid fa-circle-info" style="font-size: 11px; opacity: 0.8;"></i>
+                </div>
+
                 <div class="balance-title">Balansınız</div>
                 <div class="balance-value">
                     <i class="fa-solid fa-coins" style="color: #ffd700;"></i>
@@ -399,7 +499,7 @@
             <div class="profile-card">
                 <img src="" alt="PP" class="user-avatar" id="profile-avatar">
                 <div class="profile-username" id="profile-name">Yüklənir...</div>
-                <div class="profile-status">Orijinal Dizayn</div>
+                <div class="profile-status" id="profile-level-status">Level 1 İştirakçısı</div>
                 
                 <div class="stats-grid">
                     <div>
@@ -443,30 +543,61 @@
             coins: coins
         };
 
+        // 🧠 Dinamik Level Hesablama Mexanizmi
+        function calculateLevel(coinAmount) {
+            if (coinAmount <= 5000) return 1;
+            if (coinAmount <= 10000) return 2;
+            if (coinAmount <= 15000) return 3;
+            if (coinAmount <= 20000) return 4;
+            if (coinAmount <= 25000) return 5;
+            if (coinAmount <= 30000) return 6;
+            if (coinAmount <= 35000) return 7;
+            if (coinAmount <= 40000) return 8;
+            if (coinAmount <= 60000) return 9;
+            return 10;
+        }
+
+        // Klik Gücü Hesablama (+1 və ya +2)
+        function getClickPower(level) {
+            return level <= 5 ? 1 : 2;
+        }
+
         function updateUIProfiles() {
+            const currentLevel = calculateLevel(coins);
+            
             document.getElementById('header-name').innerText = currentUser.name;
             document.getElementById('header-avatar').src = currentUser.photo;
             document.getElementById('profile-name').innerText = currentUser.name;
             document.getElementById('profile-avatar').src = currentUser.photo;
             document.getElementById('profile-id').innerText = `#${currentUser.id}`;
             document.getElementById('profile-coins').innerText = coins;
+            
+            // Səviyyə yazılarının yenilənməsi
+            document.getElementById('home-level-display').innerText = `Level ${currentLevel}`;
+            document.getElementById('profile-level-status').innerText = `Level ${currentLevel} Üzvü`;
         }
         updateUIProfiles();
 
-        // 🌟 Donmayan Sürətli Klik Sistemi
+        // 🌟 Klik Sistemi
         const coinBtn = document.getElementById('main-coin-btn');
         coinBtn.addEventListener('click', (e) => {
-            coins += 1;
+            const currentLevel = calculateLevel(coins);
+            const clickPower = getClickPower(currentLevel);
+            
+            coins += clickPower;
             document.getElementById('coin-count').innerText = coins;
             localStorage.setItem(STORAGE_KEY, coins);
             currentUser.coins = coins;
             
+            // Səviyyə dəyişərsə dərhal UI yenilənsin
+            document.getElementById('home-level-display').innerText = `Level ${calculateLevel(coins)}`;
+            
             syncToRealLeaderboard(currentUser);
 
-            // +1 Animasiyası
+            // Dinamik Uçan Yazı Animasiyası (+1 və ya +2)
             const plus = document.createElement('div');
             plus.classList.add('plus-one');
-            plus.innerText = '+1';
+            plus.innerText = `+${clickPower}`;
             plus.style.left = `${e.clientX - 15}px`;
             plus.style.top = `${e.clientY - 30}px`;
             document.body.appendChild(plus);
@@ -487,7 +618,7 @@
             }
         });
 
-        // 📊 LİDERLƏR CƏDVƏLİ (SAXTA DATA TAMAMİLƏ REJECT EDİLDİ)
+        // 📊 LİDERLƏR CƏDVƏLİ RESTRİKSİYASI
         function syncToRealLeaderboard(userObj) {
             let list = JSON.parse(localStorage.getItem('pure_real_users')) || [];
             const idx = list.findIndex(u => u.id === userObj.id);
@@ -508,7 +639,7 @@
 
             if(pageId === 'profile') {
                 document.getElementById('top-header').style.display = 'none';
-                document.getElementById('profile-coins').innerText = coins;
+                updateUIProfiles();
             } else {
                 document.getElementById('top-header').style.display = 'flex';
             }
@@ -516,7 +647,6 @@
         }
 
         function loadLeaderboard() {
-            // Siyahıda yalnız tətbiqi açan real şəxslər toplanır
             let list = JSON.parse(localStorage.getItem('pure_real_users')) || [currentUser];
             list.sort((a, b) => b.coins - a.coins);
 
@@ -524,11 +654,18 @@
             container.innerHTML = "";
             
             list.forEach((u, idx) => {
+                // Hər bir liderin xalına uyğun səviyyəsini hesablayırıq
+                const userLevel = calculateLevel(u.coins);
+                
                 container.innerHTML += `
                     <div class="leader-item">
                         <div class="leader-rank">${idx + 1}</div>
                         <img src="${u.photo}" class="leader-avatar">
-                        <div class="leader-name">${u.name} ${u.id === currentUser.id ? '<span style="color:var(--tg-blue); font-size:11px;">(Sən)</span>' : ''}</div>
+                        <div class="leader-name">
+                            <span>${u.name}</span>
+                            <span class="leader-level-tag">Lvl ${userLevel}</span>
+                            ${u.id === currentUser.id ? '<span style="color:var(--tg-blue); font-size:11px;">(Sən)</span>' : ''}
+                        </div>
                         <div class="leader-coins">${u.coins} 🪙</div>
                     </div>
                 `;
@@ -540,7 +677,6 @@
             btn.innerText = "Yoxlanılır...";
             btn.disabled = true;
 
-            // Python bot serverinizlə tam əlaqə qurulur
             fetch(`http://localhost:5000/check_member?user_id=${currentUser.id}`)
             .then(res => res.json())
             .then(data => {
@@ -552,6 +688,7 @@
                     localStorage.setItem(STORAGE_KEY, coins);
                     currentUser.coins = coins;
                     syncToRealLeaderboard(currentUser);
+                    updateUIProfiles();
                 } else {
                     btn.innerText = "Yoxla";
                     btn.disabled = false;
@@ -565,8 +702,12 @@
             });
         }
 
+        // Modal İdarəetmə Funksiyaları
         function openModal() { document.getElementById('task-modal').classList.add('open'); }
         function closeModal() { document.getElementById('task-modal').classList.remove('open'); }
+        
+        function openLevelModal() { document.getElementById('level-modal').classList.add('open'); }
+        function closeLevelModal() { document.getElementById('level-modal').classList.remove('open'); }
     </script>
 </body>
 </html>
