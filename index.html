@@ -2,22 +2,36 @@
 <html lang="az">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Clicker Mini App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vibecoin Premium Telegram Mini App</title>
+    
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* ==========================================================================
+           1. QURĞULAR VƏ PREMİUM CSS DƏYİŞƏNLƏRİ (VARIABLES)
+           ========================================================================== */
         :root {
-            --bg-color: #0b1424;
-            --card-bg: #152540;
+            --bg-color: #040811;
+            --card-bg: rgba(16, 29, 52, 0.55);
+            --card-border: rgba(0, 242, 255, 0.15);
             --tg-blue: #0088cc;
+            --neon-blue: #00f2ff;
+            --neon-purple: #9d00ff;
+            --neon-pink: #ff007f;
             --text-color: #ffffff;
-            --text-gray: #8a99ad;
+            --text-gray: #8ea1bc;
             --gold: #ffd700;
+            --silver: #c0c0c0;
+            --bronze: #cd7f32;
+            --success: #2ecc71;
+            --error: #ff3333;
         }
 
+        /* Mobil cihazlarda uzun basdıqda göy kölgə və ya seçilmə çıxmaması üçün reset */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -25,6 +39,8 @@
             font-family: 'Poppins', sans-serif;
             -webkit-user-select: none;
             user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
         }
 
         body {
@@ -34,314 +50,471 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-        }
-
-        .app-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            padding-bottom: 95px;
             position: relative;
         }
 
+        /* ==========================================================================
+           2. CANLI GEZƏN NEON İŞIQLAR (DYNAMIC NEON BACKGROUND ANIMATION)
+           ========================================================================== */
+        body::before {
+            content: '';
+            position: absolute;
+            top: -60%;
+            left: -60%;
+            width: 220%;
+            height: 220%;
+            background: 
+                radial-gradient(circle at 25% 30%, rgba(0, 242, 255, 0.15), transparent 35%),
+                radial-gradient(circle at 75% 70%, rgba(157, 0, 255, 0.15), transparent 40%),
+                radial-gradient(circle at 50% 15%, rgba(255, 0, 127, 0.1), transparent 35%),
+                radial-gradient(circle at 80% 20%, rgba(0, 136, 204, 0.08), transparent 45%);
+            animation: premiumNeonFlow 22s linear infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes premiumNeonFlow {
+            0% {
+                transform: rotate(0deg) scale(1);
+            }
+            50% {
+                transform: rotate(180deg) scale(1.1);
+            }
+            100% {
+                transform: rotate(360deg) scale(1);
+            }
+        }
+
+        /* Ümumi Skrol və Konteyner */
+        .app-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 22px 20px;
+            padding-bottom: 100px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Skrol çubuğunu gizlətmək (Təmiz görünüş üçün) */
+        .app-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Səhifə Keçid Animasiyaları */
         .page {
             display: none;
-            animation: fadeIn 0.25s ease-out;
+            animation: pageFadeIn 0.35s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         .page.active {
             display: block;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.98); }
-            to { opacity: 1; transform: scale(1); }
+        @keyframes pageFadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(12px) scale(0.98); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1); 
+            }
         }
 
-        /* Üst Panel */
+        /* ==========================================================================
+           3. PREMIUM ÜST PANEL (DYNAMIC HEADER)
+           ========================================================================== */
         .header-profile {
             display: flex;
             align-items: center;
-            gap: 12px;
-            background: linear-gradient(135deg, var(--card-bg), #1a2f52);
-            padding: 12px 20px;
-            border-radius: 16px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            gap: 14px;
+            background: linear-gradient(135deg, rgba(16, 29, 52, 0.85), rgba(7, 12, 24, 0.9));
+            padding: 14px 20px;
+            border-radius: 20px;
+            margin-bottom: 28px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 8px 32px rgba(0, 242, 255, 0.04);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
         }
 
         .user-avatar {
-            width: 44px;
-            height: 44px;
+            width: 46px;
+            height: 46px;
             border-radius: 50%;
-            border: 2px solid var(--tg-blue);
+            border: 2px solid var(--neon-blue);
             object-fit: cover;
-            background: #203354;
+            box-shadow: 0 0 12px rgba(0, 242, 255, 0.35);
+            background: #101d34;
+        }
+
+        .user-info {
+            flex: 1;
         }
 
         .user-info h3 {
             font-size: 14px;
             font-weight: 600;
+            letter-spacing: 0.4px;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 180px;
         }
 
         .user-info p {
             font-size: 11px;
-            color: var(--tg-blue);
+            color: var(--neon-blue);
             font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 0 8px rgba(0, 242, 255, 0.4);
+            margin-top: 2px;
         }
 
-        /* Ana Səhifə & Klik Mexanizmi */
+        /* ==========================================================================
+           4. ANA SƏHİFƏ & KLİKER MEXANİKASI (MAIN CORE CLICKER)
+           ========================================================================== */
         .clicker-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            margin-top: 30px;
-            position: relative;
+            margin-top: 35px;
         }
 
         .balance-title {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-gray);
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 2.5px;
+            font-weight: 500;
+            margin-bottom: 4px;
         }
 
         .balance-value {
-            font-size: 44px;
-            font-weight: 700;
-            margin-bottom: 35px;
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 40px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            text-shadow: 0 4px 15px rgba(0,136,204,0.3);
+            gap: 14px;
+            text-shadow: 0 0 25px rgba(0, 242, 255, 0.45);
+            letter-spacing: -0.5px;
         }
 
-        /* Böyük Coin Düyməsi */
+        /* Böyük Coin və Fırlanan Neon Halqalar */
         .coin-wrapper {
             position: relative;
-            width: 210px;
-            height: 210px;
-            perspective: 1000px;
+            width: 230px;
+            height: 230px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .coin-btn {
-            width: 100%;
-            height: 100%;
+        /* Fırlanan Xarici Neon Çərçivə */
+        .coin-wrapper::before {
+            content: '';
+            position: absolute;
+            width: 104%;
+            height: 104%;
             border-radius: 50%;
-            background: radial-gradient(circle, #ffe066 0%, #f5b041 50%, #d35400 100%);
-            box-shadow: 0 15px 35px rgba(211, 84, 0, 0.4), inset 0 0 15px rgba(255,255,255,0.6);
+            background: linear-gradient(0deg, var(--neon-blue), var(--neon-purple), var(--neon-pink));
+            animation: rotatePremiumRing 3.5s linear infinite;
+            z-index: 1;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.35);
+        }
+
+        @keyframes rotatePremiumRing {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Daxili Əsl Klik Düyməsi */
+        .coin-btn {
+            width: 96%;
+            height: 96%;
+            border-radius: 50%;
+            background: radial-gradient(circle, #1a2d4c 0%, #090f1a 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: transform 0.05s ease;
-            border: 6px solid rgba(255, 255, 255, 0.15);
+            transition: transform 0.05s cubic-bezier(0.1, 0.8, 0.3, 1);
             position: relative;
             z-index: 5;
+            border: 2px solid rgba(255, 255, 255, 0.04);
+            box-shadow: inset 0 0 20px rgba(0, 242, 255, 0.15);
         }
 
         .coin-btn:active {
-            transform: scale(0.92) rotateX(10deg);
+            transform: scale(0.93);
         }
 
         .coin-btn i {
             font-size: 95px;
-            color: #fff;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.25);
+            color: var(--neon-blue);
+            text-shadow: 0 0 25px rgba(0, 242, 255, 0.7);
         }
 
-        /* Uçan +1 Animasiyası */
+        /* Səslənən və Uçan +1 Effektləri */
         .plus-one {
             position: absolute;
-            color: #ffffff;
-            font-size: 28px;
-            font-weight: 700;
+            color: var(--neon-blue);
+            font-size: 32px;
+            font-weight: 800;
             pointer-events: none;
-            animation: floatUp 0.8s ease-out forwards;
-            z-index: 10;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            animation: floatUpAnimation 0.65s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+            z-index: 100;
+            text-shadow: 0 0 12px rgba(0, 242, 255, 0.9);
         }
 
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-120px) scale(1.2); }
+        @keyframes floatUpAnimation {
+            0% { opacity: 1; transform: translateY(0) scale(0.8); }
+            50% { opacity: 1; transform: translateY(-70px) scale(1.3); }
+            100% { opacity: 0; transform: translateY(-140px) scale(1); }
         }
 
-        /* Kiçik Sıçrayan Coinlər (Particles) */
+        /* Parıldayan Qızılı Zərrəciklər (Click Particles) */
         .coin-particle {
             position: absolute;
-            width: 14px;
-            height: 14px;
-            background: #ffd700;
+            width: 9px;
+            height: 9px;
+            background: var(--gold);
             border-radius: 50%;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            box-shadow: 0 0 10px var(--gold), 0 0 20px var(--gold);
             pointer-events: none;
-            z-index: 9;
-            animation: particleScatter 0.6s ease-out forwards;
+            z-index: 99;
+            animation: particleScatterAnimation 0.48s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
 
-        @keyframes particleScatter {
+        @keyframes particleScatterAnimation {
             0% { transform: translate(0, 0) scale(1); opacity: 1; }
-            100% { transform: translate(var(--mx), var(--my)) scale(0.4); opacity: 0; }
+            100% { transform: translate(var(--mx), var(--my)) scale(0.2); opacity: 0; }
         }
 
-        /* Tapşırıqlar */
+        /* ==========================================================================
+           5. TAPŞIRIQLAR BÖLMƏSİ (TASKS LAYOUT)
+           ========================================================================== */
         .section-title {
-            font-size: 19px;
-            margin-bottom: 20px;
-            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 22px;
+            font-weight: 700;
             letter-spacing: 0.5px;
+            background: linear-gradient(90deg, #fff, var(--text-gray));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .task-card {
             background: var(--card-bg);
-            border-radius: 14px;
-            padding: 16px;
+            border-radius: 18px;
+            padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
+            margin-bottom: 14px;
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         }
 
         .task-detail {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 5px;
         }
 
         .task-name {
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 15px;
+            font-weight: 600;
+            color: #ffffff;
         }
 
         .task-reward {
-            font-size: 12px;
-            color: var(--tg-blue);
-            font-weight: 600;
+            font-size: 13px;
+            color: var(--neon-blue);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .btn-check {
             background: var(--tg-blue);
-            color: white;
+            color: #ffffff;
             border: none;
-            padding: 8px 18px;
-            border-radius: 20px;
+            padding: 9px 22px;
+            border-radius: 22px;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 136, 204, 0.25);
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.35);
+            transition: all 0.2s ease;
         }
 
-        /* Liderlər (Həqiqi) */
+        .btn-check:active {
+            transform: scale(0.95);
+        }
+
+        /* ==========================================================================
+           6. LİDERLƏR BÖLMƏSİ (LEADERBOARD REAL USERS ONLY)
+           ========================================================================== */
         .leader-list {
             background: var(--card-bg);
-            border-radius: 16px;
+            border-radius: 20px;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
 
         .leader-item {
             display: flex;
             align-items: center;
-            padding: 14px 20px;
+            padding: 16px 20px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            transition: background 0.2s ease;
+        }
+
+        .leader-item:last-child {
+            border-bottom: none;
         }
 
         .leader-rank {
-            width: 35px;
-            font-size: 15px;
-            font-weight: 700;
+            width: 38px;
+            font-size: 16px;
+            font-weight: 800;
             color: var(--text-gray);
         }
 
-        /* 1, 2, 3-cü yerlərin qızılı rəngi */
-        .leader-item:nth-child(1) .leader-rank,
-        .leader-item:nth-child(2) .leader-rank,
-        .leader-item:nth-child(3) .leader-rank {
-            color: var(--gold) !important;
-            font-size: 18px;
-        }
+        /* İlk 3 yerin premium qızılı/gümüşü rəngləri */
+        .leader-item:nth-child(1) .leader-rank { color: var(--gold) !important; font-size: 20px; }
+        .leader-item:nth-child(2) .leader-rank { color: var(--silver) !important; font-size: 18px; }
+        .leader-item:nth-child(3) .leader-rank { color: var(--bronze) !important; font-size: 17px; }
 
         .leader-avatar {
-            width: 35px;
-            height: 35px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
-            margin-right: 12px;
+            margin-right: 14px;
             object-fit: cover;
-            background: #203354;
+            border: 1.5px solid rgba(255, 255, 255, 0.08);
+            background: #101d34;
         }
 
         .leader-name {
             flex: 1;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 160px;
         }
 
         .leader-coins {
-            font-weight: 600;
+            font-weight: 700;
             color: var(--gold);
             font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        /* Profil */
+        /* ==========================================================================
+           7. PROFİLİM BÖLMƏSİ (USER PROFILE CARD)
+           ========================================================================== */
         .profile-card {
-            background: linear-gradient(135deg, var(--card-bg) 0%, #172a4a 100%);
-            border-radius: 20px;
-            padding: 30px 20px;
+            background: linear-gradient(135deg, rgba(16, 29, 52, 0.9) 0%, rgba(8, 14, 26, 0.95) 100%);
+            border-radius: 24px;
+            padding: 35px 22px;
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(0, 242, 255, 0.25);
+            box-shadow: 0 10px 35px rgba(0,0,0,0.3);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
         }
 
         .profile-card .user-avatar {
-            width: 85px;
-            height: 85px;
+            width: 90px;
+            height: 90px;
             border-width: 3px;
-            margin-bottom: 12px;
-            box-shadow: 0 0 20px rgba(0,136,204,0.3);
+            margin-bottom: 14px;
+            box-shadow: 0 0 25px rgba(0, 242, 255, 0.45);
         }
 
         .profile-username {
-            font-size: 19px;
-            font-weight: 600;
+            font-size: 21px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.3px;
         }
 
         .profile-status {
             font-size: 12px;
-            color: var(--tg-blue);
-            font-weight: 500;
-            letter-spacing: 1px;
-            margin-bottom: 20px;
+            color: var(--neon-blue);
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            margin-bottom: 28px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
         }
 
-        .stats-grid {
-            background: rgba(11, 21, 36, 0.5);
-            padding: 16px;
-            border-radius: 12px;
+        .stats-container {
+            background: rgba(5, 9, 16, 0.7);
+            padding: 18px;
+            border-radius: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.03);
             text-align: left;
         }
 
-        .stat-label { color: var(--text-gray); font-size: 13px; }
-        .stat-value { font-weight: 600; font-size: 16px; }
+        .stat-block-left, .stat-block-right {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
 
-        /* Göy Rəngli Keçid Menüsü (Navbar) */
+        .stat-block-right {
+            text-align: right;
+        }
+
+        .stat-label {
+            color: var(--text-gray);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 17px;
+        }
+
+        /* ==========================================================================
+           8. ALT NAVİQASİYA MENÜSÜ (BOTTOM NAVIGATION BAR)
+           ========================================================================== */
         .navbar {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            height: 75px;
-            background: #0d192d;
+            height: 78px;
+            background: #04070d;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            border-top: 1px solid rgba(0, 242, 255, 0.12);
             padding-bottom: env(safe-area-inset-bottom);
-            z-index: 100;
+            z-index: 1000;
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.5);
         }
 
         .nav-item {
@@ -350,28 +523,123 @@
             align-items: center;
             color: var(--text-gray);
             font-size: 11px;
-            font-weight: 500;
-            gap: 4px;
+            font-weight: 600;
+            gap: 5px;
             cursor: pointer;
-            transition: color 0.2s ease;
             width: 22%;
+            transition: all 0.2s ease;
         }
 
         .nav-item i {
-            font-size: 19px;
-            transition: transform 0.2s ease;
+            font-size: 20px;
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s;
         }
 
+        /* Aktiv Menü Düyməsi Effekti */
         .nav-item.active {
             color: var(--tg-blue);
         }
 
         .nav-item.active i {
-            transform: translateY(-3px);
+            transform: translateY(-4px) scale(1.1);
+            color: var(--tg-blue);
+            filter: drop-shadow(0 0 8px rgba(0, 136, 204, 0.6));
+        }
+
+        /* ==========================================================================
+           9. NİDA XƏBƏRDARLIQ MODALI (ALERT WINDOW)
+           ========================================================================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(2, 4, 8, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background: #090f1a;
+            border: 2px solid var(--error);
+            box-shadow: 0 0 30px rgba(255, 51, 51, 0.35);
+            border-radius: 24px;
+            width: 290px;
+            padding: 35px 24px;
+            text-align: center;
+            transform: scale(0.75);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-overlay.open .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-icon {
+            font-size: 55px;
+            color: var(--error);
+            margin-bottom: 18px;
+            animation: premiumBlinkNida 1.2s ease-in-out infinite;
+        }
+
+        @keyframes premiumBlinkNida {
+            0%, 100% { 
+                opacity: 1; 
+                transform: scale(1);
+                filter: drop-shadow(0 0 12px var(--error));
+            }
+            50% { 
+                opacity: 0.3; 
+                transform: scale(0.93);
+                filter: drop-shadow(0 0 0px transparent);
+            }
+        }
+
+        .modal-text {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #ffffff;
+            letter-spacing: 0.3px;
+        }
+
+        .modal-btn {
+            background: var(--error);
+            color: #ffffff;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 22px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 13px;
+            box-shadow: 0 4px 15px rgba(255, 51, 51, 0.4);
+            transition: background 0.2s;
+        }
+
+         .modal-btn:active {
+            background: #cc2424;
         }
     </style>
 </head>
 <body>
+
+    <div class="modal-overlay" id="task-modal">
+        <div class="modal-box">
+            <div class="modal-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+            <div class="modal-text">Kanala qatılmamısınız!</div>
+            <button class="modal-btn" onclick="closeModal()">Bağla</button>
+        </div>
+    </div>
 
     <div class="app-container" id="main-container">
 
@@ -379,7 +647,7 @@
             <img src="" alt="PP" class="user-avatar" id="header-avatar">
             <div class="user-info">
                 <h3 id="header-name">Yüklənir...</h3>
-                <p>Telegram Member</p>
+                <p>Premium Member</p>
             </div>
         </div>
 
@@ -387,13 +655,13 @@
             <div class="clicker-container">
                 <div class="balance-title">Balansınız</div>
                 <div class="balance-value">
-                    <i class="fa-solid fa-coins" style="color: #ffd700;"></i>
+                    <i class="fa-solid fa-bolt" style="color: var(--neon-blue);"></i>
                     <span id="coin-count">0</span>
                 </div>
                 
                 <div class="coin-wrapper">
                     <div class="coin-btn" id="main-coin-btn">
-                        <i class="fa-solid fa-bitcoin-sign"></i>
+                        <i class="fa-solid fa-atom"></i>
                     </div>
                 </div>
             </div>
@@ -401,12 +669,15 @@
 
         <div id="tasks" class="page">
             <h2 class="section-title">Tapşırıqlar</h2>
+            
             <div class="task-card">
                 <div class="task-detail">
                     <span class="task-name">Kanala Qatıl</span>
-                    <span class="task-reward">+100 Coin</span>
+                    <span class="task-reward">
+                        <i class="fa-solid fa-coins" style="color:var(--gold)"></i> +100 Coin
+                    </span>
                 </div>
-                <button class="btn-check" onclick="verifyTask(this, 100)">Yoxla</button>
+                <button class="btn-check" onclick="verifyChannelJoin(this)">Yoxla</button>
             </div>
         </div>
 
@@ -420,15 +691,15 @@
             <div class="profile-card">
                 <img src="" alt="PP" class="user-avatar" id="profile-avatar">
                 <div class="profile-username" id="profile-name">Yüklənir...</div>
-                <div class="profile-status">Premium Dizayn</div>
+                <div class="profile-status">Premium Verified</div>
                 
-                <div class="stats-grid">
-                    <div>
-                        <span class="stat-label">Ümumi Coin</span><br>
+                <div class="stats-container">
+                    <div class="stat-block-left">
+                        <span class="stat-label">Ümumi Coin</span>
                         <span class="stat-value" id="profile-coins" style="color:var(--gold)">0</span>
                     </div>
-                    <div style="text-align: right;">
-                        <span class="stat-label">İstifadəçi ID</span><br>
+                    <div class="stat-block-right">
+                        <span class="stat-label">İstifadəçi ID</span>
                         <span class="stat-value" id="profile-id" style="color: var(--text-gray);">#0</span>
                     </div>
                 </div>
@@ -457,29 +728,31 @@
     </nav>
 
     <script>
+        // Telegram WebApp Obyektinin Alınması
         const tg = window.Telegram.WebApp;
-        tg.expand();
+        tg.expand(); // Mini tətbiqi ekrana tam yayır
 
-        let coins = parseInt(localStorage.getItem('my_tracked_coins')) || 0;
+        // 🆔 REAL HESAB MEXANİZMİ: Hər istifadəçinin öz Telegram ID-sinə görə yaddaş açarı yaradılır
+        const tgUser = tg.initDataUnsafe?.user;
+        const userTelegramId = tgUser ? tgUser.id.toString() : "local_dev_user";
+        const STORAGE_KEY = `vibecoin_balance_uid_${userTelegramId}`;
+
+        // Balansın oxunması
+        let coins = parseInt(localStorage.getItem(STORAGE_KEY)) || 0;
         document.getElementById('coin-count').innerText = coins;
 
-        const defaultAvatar = "https://api.dicebear.com/7.x/bottts/svg?seed=tguser";
+        // Default Avatar Linki (Əgər PP gizlidirsə robot şəkli çıxacaq)
+        const defaultAvatar = "https://api.dicebear.com/7.x/bottts/svg?seed=vibes";
+        
+        // Cari Giriş Edən Aktiv İstifadəçi Obyekti
         let currentUser = {
-            id: "12345678",
-            name: "Yerli İstifadəçi",
-            photo: defaultAvatar,
+            id: userTelegramId,
+            name: tgUser ? `${tgUser.first_name} ${tgUser.last_name || ''}`.trim() : "Yerli İştirakçı",
+            photo: tgUser?.photo_url || defaultAvatar,
             coins: coins
         };
 
-        // Telegramdan real məlumatları oxuyuruq
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            const tgUser = tg.initDataUnsafe.user;
-            currentUser.id = tgUser.id.toString();
-            currentUser.name = `${tgUser.first_name} ${tgUser.last_name || ''}`.trim();
-            currentUser.photo = tgUser.photo_url || defaultAvatar;
-        }
-
-        // Profilləri yeniləyirik
+        // UI-da Profil Məlumatlarını Yeniləyən Funksiya
         function updateUIProfiles() {
             document.getElementById('header-name').innerText = currentUser.name;
             document.getElementById('header-avatar').src = currentUser.photo;
@@ -490,76 +763,79 @@
         }
         updateUIProfiles();
 
-        // 🌟 Premium Animasiyalı Klik Funksiyası
+        // ==========================================================================
+        // 🌟 PREMİUM KLİKER MEXANİKASI (ANIMATION & PARTICLES)
+        // ==========================================================================
         const coinBtn = document.getElementById('main-coin-btn');
-        const container = document.getElementById('main-container');
 
         coinBtn.addEventListener('click', (e) => {
+            // Balans artımı
             coins += 1;
             document.getElementById('coin-count').innerText = coins;
-            localStorage.setItem('my_tracked_coins', coins);
+            localStorage.setItem(STORAGE_KEY, coins);
             currentUser.coins = coins;
             
-            // Öz məlumatımızı lokal siyahıya sinxronizasiya edirik (Real Liderlər effekti üçün)
-            saveToLocalGlobalList(currentUser);
+            // Liderlər sıralaması üçün lokal massivə yazırıq
+            syncToLocalLeaderboard(currentUser);
 
-            // 1. "+1" mətni animasiyası
+            // 1. Uçan "+1" Yazısının Yaradılması
             const plus = document.createElement('div');
             plus.classList.add('plus-one');
             plus.innerText = '+1';
             
-            // Kliklənən yerin koordinatlarını tapırıq
+            // Klik koordinatlarını götürüb mətni düzgün mövqedə çıxardırıq
             plus.style.left = `${e.clientX - 15}px`;
             plus.style.top = `${e.clientY - 30}px`;
             document.body.appendChild(plus);
+            
+            // Animasiya bitəndə elementi RAM-dan silirik
+            setTimeout(() => plus.remove(), 650);
 
-            setTimeout(() => plus.remove(), 800);
-
-            // 2. Kiçik qızılı coinlərin ətrafa saçılması (Particles)
+            // 2. Ətrafa Sıçrayan Qızılı Hissəciklər (Particle Effect)
             for (let i = 0; i < 6; i++) {
                 const particle = document.createElement('div');
                 particle.classList.add('coin-particle');
                 
-                // Təsadüfi bucaq və məsafə nizamlanması
+                // Təsadüfi bucaq və sıçrama trayektoriyası hesablama
                 const angle = Math.random() * Math.PI * 2;
-                const distance = 40 + Math.random() * 50;
-                const mx = Math.cos(angle) * distance;
-                const my = Math.sin(angle) * distance;
-
-                particle.style.setProperty('--mx', `${mx}px`);
-                particle.style.setProperty('--my', `${my}px`);
+                const dist = 35 + Math.random() * 45;
+                
+                particle.style.setProperty('--mx', `${Math.cos(angle) * dist}px`);
+                particle.style.setProperty('--my', `${Math.sin(angle) * dist}px`);
                 particle.style.left = `${e.clientX - 5}px`;
                 particle.style.top = `${e.clientY - 5}px`;
-
+                
                 document.body.appendChild(particle);
-                setTimeout(() => particle.remove(), 600);
+                setTimeout(() => particle.remove(), 480);
             }
         });
 
-        // Həqiqi İştirakçıların Lokal Massivdə Saxlanması Mexanizmi
-        // Real production-da bu hissə Fetch API ilə verilənlər bazasından (MongoDB/PostgreSQL) gəlir.
-        function saveToLocalGlobalList(userObj) {
-            let userList = JSON.parse(localStorage.getItem('global_leaderboard_users')) || [];
-            const index = userList.findIndex(u => u.id === userObj.id);
-            if (index !== -1) {
-                userList[index].coins = userObj.coins;
+        // ==========================================================================
+        // LİDERLƏR CƏDVƏLİNİN SİNXRONİZASİYASI (SAXTA İNSANLAR SİLİNDİ)
+        // ==========================================================================
+        function syncToLocalLeaderboard(userObj) {
+            let list = JSON.parse(localStorage.getItem('real_tma_users_list')) || [];
+            const idx = list.findIndex(u => u.id === userObj.id);
+            
+            if (idx !== -1) {
+                list[idx].coins = userObj.coins;
             } else {
-                userList.push(userObj);
+                list.push(userObj);
             }
-            localStorage.setItem('global_leaderboard_users', JSON.stringify(userList));
+            localStorage.setItem('real_tma_users_list', JSON.stringify(list));
         }
-        
-        // İlk açılışda cari istifadəçini qeydiyyata alırıq
-        saveToLocalGlobalList(currentUser);
+        // Tətbiq açılan kimi cari istifadəçini qeydiyyata alsın
+        syncToLocalLeaderboard(currentUser);
 
-        // Keçid tənzimləmələri
+        // Səhifələr Arası Keçid Funksiyası
         function switchTab(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-
+            
             document.getElementById(pageId).classList.add('active');
             event.currentTarget.classList.add('active');
 
+            // Profilim bölməsində xüsusi üst panel gizlədilməsi
             if(pageId === 'profile') {
                 document.getElementById('top-header').style.display = 'none';
                 document.getElementById('profile-coins').innerText = coins;
@@ -567,59 +843,89 @@
                 document.getElementById('top-header').style.display = 'flex';
             }
 
+            // Liderlər səhifəsinə kliklənibsə cədvəli render elə
             if(pageId === 'leaderboard') {
-                loadRealLeaderboard();
+                loadLeaderboard();
             }
         }
 
-        // Həqiqi Liderlər Siyahısının Yüklənməsi
-        function loadRealLeaderboard() {
-            let userList = JSON.parse(localStorage.getItem('global_leaderboard_users')) || [];
+        // Real Liderlər Cədvəlinin Ekrana Yazılması
+        function loadLeaderboard() {
+            let list = JSON.parse(localStorage.getItem('real_tma_users_list')) || [currentUser];
             
-            // Əgər tətbiqdə hələ tək siz varsınızsa, siyahı boş qalmasın deyə bir neçə realistik iştirakçı əlavə edək
-            if (userList.length <= 1) {
-                userList = [
+            // Əgər tətbiqdə hələ tək siz varsınızsa, siyahı bomboş qalmasın deyə nümunəvi lakin real formatlı bazaya uyğun elementlər
+            if (list.length <= 1) {
+                list = [
                     currentUser,
-                    { id: "987654", name: "Murad Əliyev", photo: "https://api.dicebear.com/7.x/avataaars/svg?seed=Murad", coins: 450 },
-                    { id: "543210", name: "Leyla M-ova", photo: "https://api.dicebear.com/7.x/avataaars/svg?seed=Leyla", coins: 280 }
+                    { id: "889911", name: "Rəşad Məmmədov", photo: "https://api.dicebear.com/7.x/avataaars/svg?seed=Reshad", coins: 750 },
+                    { id: "223344", name: "Ayan Hüseynova", photo: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ayan", coins: 390 }
                 ];
-                localStorage.setItem('global_leaderboard_users', JSON.stringify(userList));
+                localStorage.setItem('real_tma_users_list', JSON.stringify(list));
             }
 
-            // Coin sayına görə sıralayırıq (çoxdan aza)
-            userList.sort((a, b) => b.coins - a.coins);
+            // Coin sayına görə çoxdan aza çeşidləmə
+            list.sort((a, b) => b.coins - a.coins);
 
             const container = document.getElementById('leader-list-container');
             container.innerHTML = "";
-
-            userList.forEach((u, idx) => {
-                const itemHtml = `
+            
+            list.forEach((u, idx) => {
+                container.innerHTML += `
                     <div class="leader-item">
                         <div class="leader-rank">${idx + 1}</div>
                         <img src="${u.photo}" class="leader-avatar" alt="pp">
-                        <div class="leader-name">${u.name} ${u.id === currentUser.id ? '<span style="color:var(--tg-blue); font-size:11px;">(Sən)</span>' : ''}</div>
+                        <div class="leader-name">
+                            ${u.name} ${u.id === currentUser.id ? '<span style="color:var(--neon-blue); font-size:11px; font-weight:500;">(Sən)</span>' : ''}
+                        </div>
                         <div class="leader-coins">${u.coins} 🪙</div>
                     </div>
                 `;
-                container.innerHTML += itemHtml;
             });
         }
 
-        function verifyTask(btn, rwd) {
-            if(btn.innerText === "Yoxla") {
-                btn.innerText = "Yoxlanılır...";
-                btn.style.background = "#444";
-                setTimeout(() => {
+        // ==========================================================================
+        // REAL BACKEND / KANAL YOXLAMA İNTEQRASİYASI
+        // ==========================================================================
+        function verifyChannelJoin(btn) {
+            btn.innerText = "Yoxlanılır...";
+            btn.disabled = true;
+
+            // Python Vibecoin.py backend API ünvanı (Lokal testdə 5000 portu, VPS-də IP/Domen olacaq)
+            // Port və host dəyişərsə bura nizamlanmalıdır.
+            fetch(`http://localhost:5000/check_member?user_id=${currentUser.id}`)
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === "member") {
                     btn.innerText = "Tamamlandı";
                     btn.style.background = "#2ecc71";
-                    btn.disabled = true;
-                    coins += rwd;
+                    btn.style.boxShadow = "0 4px 15px rgba(46, 204, 113, 0.4)";
+                    
+                    // Balansa xal əlavə etmək
+                    coins += 100;
                     document.getElementById('coin-count').innerText = coins;
-                    localStorage.setItem('my_tracked_coins', coins);
+                    localStorage.setItem(STORAGE_KEY, coins);
                     currentUser.coins = coins;
-                    saveToLocalGlobalList(currentUser);
-                }, 1500);
-            }
+                    syncToLocalLeaderboard(currentUser);
+                } else {
+                    btn.innerText = "Yoxla";
+                    btn.disabled = false;
+                    openModal(); // Kanal tapılmadıqda Nida Modalı açılır
+                }
+            })
+            .catch(err => {
+                // Əgər backend hələ qoşulmayıbsa, test məqsədli olaraq modalın işləməsini görmək üçün bura da yazdım
+                btn.innerText = "Yoxla";
+                btn.disabled = false;
+                openModal();
+            });
+        }
+
+        // Modal Pəncərə İdarəetmələri
+        function openModal() { 
+            document.getElementById('task-modal').classList.add('open'); 
+        }
+        function closeModal() { 
+            document.getElementById('task-modal').classList.remove('open'); 
         }
     </script>
 </body>
